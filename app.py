@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import base64
-from fpdf import FPDF
+#from fpdf import FPDF
 
 # Load data
 @st.cache_data
