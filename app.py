@@ -12,26 +12,34 @@ def load_data():
 df = load_data()
 
 # Page title
-st.title("Business CR Dashboard")
+st.set_page_config(page_title="Business CR Dashboard", layout="wide")
+st.title("📊 Business CR Dashboard")
+st.markdown("### Monitor and analyze CR data with interactive visualizations")
 
 # Summary Metrics
+st.markdown("---")
+st.subheader("📈 Key Metrics")
 col1, col2, col3 = st.columns(3)
 col1.metric("Total CRs", len(df))
 col2.metric("Active CRs", df[df['CR English Status'] == "ACTIVE"].shape[0])
-col3.metric("Average CR Age", round((pd.to_datetime("today") - df['Registration Date']).dt.days.mean() / 365, 1))
+col3.metric("Avg CR Age (Years)", round((pd.to_datetime("today") - df['Registration Date']).dt.days.mean() / 365, 1))
 
 # Filters
-sector_filter = st.selectbox("Filter by Sector", ["All"] + df['CR Sector English'].dropna().unique().tolist())
-status_filter = st.selectbox("Filter by CR Status", ["All"] + df['CR English Status'].unique().tolist())
-municipality_filter = st.selectbox("Filter by Municipality", ["All"] + df['MUN English'].dropna().unique().tolist())
-company_type_filter = st.selectbox("Filter by Company Type", ["All"] + df['Company Type English'].dropna().unique().tolist())
+st.markdown("---")
+st.subheader("🎯 Filters")
+col1, col2, col3, col4 = st.columns(4)
+sector_filter = col1.selectbox("Sector", ["All"] + df['CR Sector English'].dropna().unique().tolist())
+status_filter = col2.selectbox("CR Status", ["All"] + df['CR English Status'].unique().tolist())
+municipality_filter = col3.selectbox("Municipality", ["All"] + df['MUN English'].dropna().unique().tolist())
+company_type_filter = col4.selectbox("Company Type", ["All"] + df['Company Type English'].dropna().unique().tolist())
 
-# Date Filters
-registration_start = st.date_input("Registration Start Date", df['Registration Date'].min())
-registration_end = st.date_input("Registration End Date", df['Registration Date'].max())
-expiry_start = st.date_input("Expiry Start Date", df['Expiry Date'].min())
-expiry_end = st.date_input("Expiry End Date", df['Expiry Date'].max())
+col5, col6 = st.columns(2)
+registration_start = col5.date_input("📅 Registration Start", df['Registration Date'].min())
+registration_end = col6.date_input("📅 Registration End", df['Registration Date'].max())
+expiry_start = col5.date_input("📅 Expiry Start", df['Expiry Date'].min())
+expiry_end = col6.date_input("📅 Expiry End", df['Expiry Date'].max())
 
+# Apply Filters
 filtered_df = df.copy()
 if sector_filter != "All":
     filtered_df = filtered_df[filtered_df['CR Sector English'] == sector_filter]
@@ -46,38 +54,46 @@ filtered_df = filtered_df[(filtered_df['Registration Date'] >= pd.to_datetime(re
                           (filtered_df['Expiry Date'] >= pd.to_datetime(expiry_start)) &
                           (filtered_df['Expiry Date'] <= pd.to_datetime(expiry_end))]
 
-# CRs by Sector
+# Visuals
+st.markdown("---")
+st.subheader("📊 Visual Insights")
+col1, col2 = st.columns(2)
 fig_sector = px.bar(filtered_df.groupby("CR Sector English").size().reset_index(name='count'),
-                    x='CR Sector English', y='count', title='CRs by Sector', text_auto=True)
-st.plotly_chart(fig_sector)
+                    x='CR Sector English', y='count', title='CRs by Sector', text_auto=True, color_discrete_sequence=['#636EFA'])
+col1.plotly_chart(fig_sector, use_container_width=True)
 
-# CRs by Status
-fig_status = px.pie(filtered_df, names='CR English Status', title='CR Status Distribution')
-st.plotly_chart(fig_status)
+fig_status = px.pie(filtered_df, names='CR English Status', title='CR Status Distribution', color_discrete_sequence=px.colors.qualitative.Set2)
+col2.plotly_chart(fig_status, use_container_width=True)
 
-# CRs by Municipality (Map Visualization)
-st.subheader("CRs by Municipality")
+st.subheader("📍 CRs by Municipality")
 fig_municipality = px.bar(filtered_df.groupby("MUN English").size().reset_index(name='count'),
-                          x='MUN English', y='count', title='CRs by Municipality', text_auto=True)
-st.plotly_chart(fig_municipality)
+                          x='MUN English', y='count', title='CRs by Municipality', text_auto=True, color_discrete_sequence=['#EF553B'])
+st.plotly_chart(fig_municipality, use_container_width=True)
 
-# Yearly Registration Trends
-st.subheader("Yearly Registration Trends")
+st.subheader("📅 Yearly Registration Trends")
 df['Registration Year'] = df['Registration Date'].dt.year
 fig_yearly = px.line(df.groupby("Registration Year").size().reset_index(name='count'),
-                     x='Registration Year', y='count', title='Registrations Over Time')
-st.plotly_chart(fig_yearly)
+                     x='Registration Year', y='count', title='Registrations Over Time', markers=True, color_discrete_sequence=['#00CC96'])
+st.plotly_chart(fig_yearly, use_container_width=True)
 
 # Search Feature
+st.markdown("---")
+st.subheader("🔍 Search CRs")
 search_query = st.text_input("Search by CR Number or Name")
 if search_query:
     search_results = df[(df['CR Number'].astype(str).str.contains(search_query, na=False)) |
                         (df['CR English Name'].str.contains(search_query, case=False, na=False))]
-    st.dataframe(search_results)
+    st.dataframe(search_results, use_container_width=True)
 
 # Upcoming Expiring CRs
-st.subheader("Upcoming Expiring CRs")
-st.dataframe(filtered_df[['CR Number', 'CR English Name', 'Expiry Date']].sort_values(by='Expiry Date').head(10))
+st.markdown("---")
+st.subheader("⏳ Upcoming Expiring CRs")
+st.dataframe(filtered_df[['CR Number', 'CR English Name', 'Expiry Date']].sort_values(by='Expiry Date').head(10), use_container_width=True)
 
 # Export Feature
+st.markdown("---")
+st.subheader("📤 Export Data")
 st.download_button("Download Filtered Data", filtered_df.to_csv(index=False), "filtered_data.csv", "text/csv")
+
+st.markdown("---")
+st.markdown("💡 *Developed with Streamlit & Plotly for interactive business insights.*")
