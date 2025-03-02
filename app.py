@@ -100,6 +100,22 @@ icr_vs_ccr_trend = df.groupby(['registration quarter', 'company type english']).
 fig_icr_ccr_trend = px.line(icr_vs_ccr_trend, x='registration quarter', y='count', color='company type english', title='ICR vs CCR Growth Trends Over Time')
 st.plotly_chart(fig_icr_ccr_trend, use_container_width=True)
 
+# Sectoral Growth Over Time
+if 'CR Sector English' in df.columns:
+    sector_growth = df.groupby(['Registration Year', 'CR Sector English']).size().reset_index(name='count')
+    fig_sector_growth = px.line(sector_growth, x='Registration Year', y='count', color='CR Sector English', title='Sectoral Growth Over Time')
+    st.plotly_chart(fig_sector_growth, use_container_width=True)
+else:
+    st.warning("❗ 'CR Sector English' column is missing from the dataset.")
+
+# Compnay ICR vs CCR
+company_type_comparison = pd.DataFrame({
+    "Company Type": ["Individual Establishment (ICR)", "All Other Company Types (CCR)"],
+    "Count": [df[df['Company Type English'] == "Individual Establishment"].shape[0], df[df['Company Type English'] != "Individual Establishment"].shape[0]]
+})
+fig_company_comparison = px.bar(company_type_comparison, x="Company Type", y="Count", title="ICR vs CCR Companies", text_auto=True, color_discrete_sequence=['#636EFA'])
+st.plotly_chart(fig_company_comparison, use_container_width=True)
+
 # Export Graphs
 st.markdown("---")
 st.subheader("📤 Export Data")
