@@ -2,8 +2,6 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import base64
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
 
 # Load data
 @st.cache_data
@@ -97,26 +95,6 @@ st.dataframe(filtered_df[['CR Number', 'CR English Name', 'Expiry Date']].sort_v
 st.markdown("---")
 st.subheader("📤 Export Data")
 st.download_button("Download Filtered Data", filtered_df.to_csv(index=False), "filtered_data.csv", "text/csv")
-
-# Report Generation
-st.markdown("---")
-st.subheader("📄 Generate PDF Report")
-def generate_pdf():
-    pdf_path = "CR_Report.pdf"
-    c = canvas.Canvas(pdf_path, pagesize=letter)
-    c.setFont("Helvetica", 12)
-    c.drawString(100, 750, "CR Dashboard Report")
-    y = 730
-    for col in filtered_df.columns[:5]:
-        c.drawString(100, y, f"{col}: {str(filtered_df[col].iloc[0])}")
-        y -= 20
-    c.save()
-    return pdf_path
-
-pdf_file_path = generate_pdf()
-with open(pdf_file_path, "rb") as pdf_file:
-    pdf_bytes = pdf_file.read()
-st.download_button("Download PDF Report", data=pdf_bytes, file_name="CR_Report.pdf", mime="application/pdf")
 
 st.markdown("---")
 st.markdown("💡 *Developed with Streamlit & Plotly for interactive business insights.*")
