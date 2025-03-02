@@ -98,7 +98,7 @@ else:
 
 # Sectoral Growth Over Time
 if 'CR Sector English' in df.columns:
-    sector_growth = df.groupby(['Registration Year', 'CR Sector English']).size().reset_index(name='count')
+    sector_growth = filtered_df.groupby(['Registration Year', 'CR Sector English']).size().reset_index(name='count')
     fig_sector_growth = px.line(sector_growth, x='Registration Year', y='count', color='CR Sector English', title='Sectoral Growth Over Time')
     st.plotly_chart(fig_sector_growth, use_container_width=True)
 else:
