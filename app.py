@@ -60,7 +60,11 @@ col3.metric("Avg CR Age (Years)", round((pd.to_datetime("today") - df['Registrat
 st.markdown("---")
 st.subheader("📊 Visual Insights")
 col1, col2 = st.columns(2)
-fig_sector = px.treemap(filtered_df, path=["CR Sector English"], values=filtered_df.groupby("CR Sector English").size())
+
+# Fix: Aggregate data for treemap visualization
+sector_counts = filtered_df['CR Sector English'].value_counts().reset_index()
+sector_counts.columns = ['CR Sector English', 'Count']
+fig_sector = px.treemap(sector_counts, path=["CR Sector English"], values="Count", title="CR Distribution by Sector")
 col1.plotly_chart(fig_sector, use_container_width=True)
 
 fig_status = px.pie(filtered_df, names='CR English Status', title='CR Status Distribution', color_discrete_sequence=px.colors.qualitative.Set2)
