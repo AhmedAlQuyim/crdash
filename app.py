@@ -8,9 +8,13 @@ import base64
 def load_data():
     file_path = "CR Sample DB.xlsx"
     df = pd.read_excel(file_path, sheet_name='Sheet1')
+    df.columns = df.columns.str.strip().str.lower()  # Normalize column names
     return df
 
 df = load_data()
+
+# Debug: Display available columns
+st.write("Available columns:", df.columns.tolist())
 
 # Page title
 st.set_page_config(page_title="Business CR Dashboard", layout="wide", initial_sidebar_state="expanded")
