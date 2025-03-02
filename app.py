@@ -107,7 +107,7 @@ else:
 # Compnay ICR vs CCR
 company_type_comparison = pd.DataFrame({
     "Company Type": ["Individual Establishment (ICR)", "All Other Company Types (CCR)"],
-    "Count": [df[df['company type english'] == "Individual Establishment"].shape[0], df[df['company type english'] != "Individual Establishment"].shape[0]]
+    "Count": [df[df['Company Type English'] == "Individual Establishment"].shape[0], df[df['Company Type English'] != "Individual Establishment"].shape[0]]
 })
 fig_company_comparison = px.bar(company_type_comparison, x="Company Type", y="Count", title="ICR vs CCR Companies", text_auto=True, color_discrete_sequence=['#636EFA'])
 st.plotly_chart(fig_company_comparison, use_container_width=True)
