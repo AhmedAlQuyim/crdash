@@ -88,22 +88,41 @@ st.markdown("---")
 st.subheader("📊 Activity & Industry Analysis")
 
 # Top 10 CR Activities
-top_activities = df['CR Activity English'].value_counts().head(10).reset_index()
-top_activities.columns = ['CR Activity', 'Count']
-fig_activities = px.bar(top_activities, x='CR Activity', y='Count', title='Top 10 CR Activities', text_auto=True, color_discrete_sequence=['#FFA15A'])
-st.plotly_chart(fig_activities, use_container_width=True)
+if 'CR Activity English' in df.columns:
+    top_activities = df['CR Activity English'].value_counts().head(10).reset_index()
+    top_activities.columns = ['CR Activity', 'Count']
+    fig_activities = px.bar(top_activities, x='CR Activity', y='Count', title='Top 10 CR Activities', text_auto=True, color_discrete_sequence=['#FFA15A'])
+    st.plotly_chart(fig_activities, use_container_width=True)
+else:
+    st.warning("❗ 'CR Activity English' column is missing from the dataset.")
 
 # Sectoral Growth Over Time
-sector_growth = df.groupby(['Registration Year', 'CR Sector English']).size().reset_index(name='count')
-fig_sector_growth = px.line(sector_growth, x='Registration Year', y='count', color='CR Sector English', title='Sectoral Growth Over Time')
-st.plotly_chart(fig_sector_growth, use_container_width=True)
+if 'CR Sector English' in df.columns:
+    sector_growth = df.groupby(['Registration Year', 'CR Sector English']).size().reset_index(name='count')
+    fig_sector_growth = px.line(sector_growth, x='Registration Year', y='count', color='CR Sector English', title='Sectoral Growth Over Time')
+    st.plotly_chart(fig_sector_growth, use_container_width=True)
+else:
+    st.warning("❗ 'CR Sector English' column is missing from the dataset.")
 
 # Company Type Registrations in Last 4 Quarters
-df['Registration Quarter'] = df['Registration Date'].dt.to_period('Q')
-last_4_quarters = df['Registration Quarter'].dropna().unique()[-4:]
-company_type_trends = df[df['Registration Quarter'].isin(last_4_quarters)].groupby(['Registration Quarter', 'Company Type English']).size().reset_index(name='count')
-fig_company_type = px.bar(company_type_trends, x='Registration Quarter', y='count', color='Company Type English', barmode='group', title='Company Type Registrations in Last 4 Quarters')
-st.plotly_chart(fig_company_type, use_container_width=True)
+if 'Company Type English' in df.columns and 'Registration Quarter' in df.columns:
+    df['Registration Quarter'] = df['Registration Date'].dt.to_period('Q')
+    last_4_quarters = df['Registration Quarter'].dropna().unique()[-4:]
+    
+    if len(last_4_quarters) > 0:
+        company_type_trends = df[df['Registration Quarter'].isin(last_4_quarters)].groupby(
+            ['Registration Quarter', 'Company Type English']
+        ).size().reset_index(name='count')
+
+        fig_company_type = px.bar(
+            company_type_trends, x='Registration Quarter', y='count', color='Company Type English', 
+            barmode='group', title='Company Type Registrations in Last 4 Quarters'
+        )
+        st.plotly_chart(fig_company_type, use_container_width=True)
+    else:
+        st.warning("❗ Not enough data to display Company Type trends.")
+else:
+    st.warning("❗ 'Company Type English' column is missing from the dataset.")
 
 # Search Feature
 st.markdown("---")
