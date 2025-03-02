@@ -95,7 +95,7 @@ fig_activity_municipality = px.bar(filtered_df.groupby(['mun english', 'cr activ
 st.plotly_chart(fig_activity_municipality, use_container_width=True)
 
 # ICR vs CCR Trends
-df['registration quarter'] = df['registration date'].dt.to_period('Q')
+df['registration quarter'] = df['registration date'].dt.to_period('Q').astype(str)
 icr_vs_ccr_trend = df.groupby(['registration quarter', 'company type english']).size().reset_index(name='count')
 fig_icr_ccr_trend = px.line(icr_vs_ccr_trend, x='registration quarter', y='count', color='company type english', title='ICR vs CCR Growth Trends Over Time')
 st.plotly_chart(fig_icr_ccr_trend, use_container_width=True)
