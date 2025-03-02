@@ -1,9 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import base64
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
 
 # Load data
 @st.cache_data
@@ -15,25 +12,32 @@ def load_data():
 df = load_data()
 
 # Page title
-st.set_page_config(page_title="Business CR Dashboard", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Business CR Dashboard", layout="wide")
 st.title("📊 Business CR Dashboard")
 st.markdown("### Monitor and analyze CR data with interactive visualizations")
 
-# Sidebar for theme toggle
-if st.sidebar.button("🌙 Toggle Dark Mode"):
-    st.markdown("<style>body {background-color: #0E1117; color: white;}</style>", unsafe_allow_html=True)
+# Summary Metrics
+st.markdown("---")
+st.subheader("📈 Key Metrics")
+col1, col2, col3 = st.columns(3)
+col1.metric("Total CRs", len(df))
+col2.metric("Active CRs", df[df['CR English Status'] == "ACTIVE"].shape[0])
+col3.metric("Avg CR Age (Years)", round((pd.to_datetime("today") - df['Registration Date']).dt.days.mean() / 365, 1))
 
-# Sidebar Filters
-st.sidebar.subheader("🎯 Filters")
-sector_filter = st.sidebar.selectbox("Sector", ["All"] + df['CR Sector English'].dropna().unique().tolist())
-status_filter = st.sidebar.selectbox("CR Status", ["All"] + df['CR English Status'].unique().tolist())
-municipality_filter = st.sidebar.selectbox("Municipality", ["All"] + df['MUN English'].dropna().unique().tolist())
-company_type_filter = st.sidebar.selectbox("Company Type", ["All"] + df['Company Type English'].dropna().unique().tolist())
+# Filters
+st.markdown("---")
+st.subheader("🎯 Filters")
+col1, col2, col3, col4 = st.columns(4)
+sector_filter = col1.selectbox("Sector", ["All"] + df['CR Sector English'].dropna().unique().tolist())
+status_filter = col2.selectbox("CR Status", ["All"] + df['CR English Status'].unique().tolist())
+municipality_filter = col3.selectbox("Municipality", ["All"] + df['MUN English'].dropna().unique().tolist())
+company_type_filter = col4.selectbox("Company Type", ["All"] + df['Company Type English'].dropna().unique().tolist())
 
-registration_start = st.sidebar.date_input("📅 Registration Start", df['Registration Date'].min())
-registration_end = st.sidebar.date_input("📅 Registration End", df['Registration Date'].max())
-expiry_start = st.sidebar.date_input("📅 Expiry Start", df['Expiry Date'].min())
-expiry_end = st.sidebar.date_input("📅 Expiry End", df['Expiry Date'].max())
+col5, col6 = st.columns(2)
+registration_start = col5.date_input("📅 Registration Start", df['Registration Date'].min())
+registration_end = col6.date_input("📅 Registration End", df['Registration Date'].max())
+expiry_start = col5.date_input("📅 Expiry Start", df['Expiry Date'].min())
+expiry_end = col6.date_input("📅 Expiry End", df['Expiry Date'].max())
 
 # Apply Filters
 filtered_df = df.copy()
@@ -50,19 +54,12 @@ filtered_df = filtered_df[(filtered_df['Registration Date'] >= pd.to_datetime(re
                           (filtered_df['Expiry Date'] >= pd.to_datetime(expiry_start)) &
                           (filtered_df['Expiry Date'] <= pd.to_datetime(expiry_end))]
 
-# Summary Metrics
-st.markdown("---")
-st.subheader("📈 Key Metrics")
-col1, col2, col3 = st.columns(3)
-col1.metric("Total CRs", len(df))
-col2.metric("Active CRs", df[df['CR English Status'] == "ACTIVE"].shape[0])
-col3.metric("Avg CR Age (Years)", round((pd.to_datetime("today") - df['Registration Date']).dt.days.mean() / 365, 1))
-
 # Visuals
 st.markdown("---")
 st.subheader("📊 Visual Insights")
 col1, col2 = st.columns(2)
-fig_sector = px.treemap(filtered_df, path=["CR Sector English"], values=filtered_df.groupby("CR Sector English").size())
+fig_sector = px.bar(filtered_df.groupby("CR Sector English").size().reset_index(name='count'),
+                    x='CR Sector English', y='count', title='CRs by Sector', text_auto=True, color_discrete_sequence=['#636EFA'])
 col1.plotly_chart(fig_sector, use_container_width=True)
 
 fig_status = px.pie(filtered_df, names='CR English Status', title='CR Status Distribution', color_discrete_sequence=px.colors.qualitative.Set2)
@@ -88,7 +85,7 @@ if search_query:
                         (df['CR English Name'].str.contains(search_query, case=False, na=False))]
     st.dataframe(search_results, use_container_width=True)
 
-# Automated Alerts (Upcoming Expiring CRs)
+# Upcoming Expiring CRs
 st.markdown("---")
 st.subheader("⏳ Upcoming Expiring CRs")
 st.dataframe(filtered_df[['CR Number', 'CR English Name', 'Expiry Date']].sort_values(by='Expiry Date').head(10), use_container_width=True)
@@ -97,26 +94,6 @@ st.dataframe(filtered_df[['CR Number', 'CR English Name', 'Expiry Date']].sort_v
 st.markdown("---")
 st.subheader("📤 Export Data")
 st.download_button("Download Filtered Data", filtered_df.to_csv(index=False), "filtered_data.csv", "text/csv")
-
-# Report Generation
-st.markdown("---")
-st.subheader("📄 Generate PDF Report")
-def generate_pdf():
-    pdf_path = "CR_Report.pdf"
-    c = canvas.Canvas(pdf_path, pagesize=letter)
-    c.setFont("Helvetica", 12)
-    c.drawString(100, 750, "CR Dashboard Report")
-    y = 730
-    for col in filtered_df.columns[:5]:
-        c.drawString(100, y, f"{col}: {str(filtered_df[col].iloc[0])}")
-        y -= 20
-    c.save()
-    return pdf_path
-
-pdf_file_path = generate_pdf()
-with open(pdf_file_path, "rb") as pdf_file:
-    pdf_bytes = pdf_file.read()
-st.download_button("Download PDF Report", data=pdf_bytes, file_name="CR_Report.pdf", mime="application/pdf")
 
 st.markdown("---")
 st.markdown("💡 *Developed with Streamlit & Plotly for interactive business insights.*")
