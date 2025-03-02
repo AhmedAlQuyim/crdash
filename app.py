@@ -51,10 +51,12 @@ filtered_df = filtered_df[(filtered_df['Registration Date'] >= pd.to_datetime(re
 # Summary Metrics
 st.markdown("---")
 st.subheader("📈 Key Metrics")
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4, col5 = st.columns(5)
 col1.metric("Total CRs", len(df))
 col2.metric("Active CRs", df[df['CR English Status'] == "ACTIVE"].shape[0])
-col3.metric("Avg CR Age (Years)", round((pd.to_datetime("today") - df['Registration Date']).dt.days.mean() / 365, 1))
+col3.metric("Deleted By Law CRs", df[df['CR English Status'] == "DELETED BY LAW"].shape[0])
+col4.metric("Total ICR", df[df['Company Type English'] == "Individual Establishment"].shape[0])
+col5.metric("Total CCR", df[df['Company Type English'] != "Individual Establishment"].shape[0])
 
 # Visuals
 st.markdown("---")
@@ -81,6 +83,28 @@ fig_yearly = px.line(df.groupby("Registration Year").size().reset_index(name='co
                      x='Registration Year', y='count', title='Registrations Over Time', markers=True, color_discrete_sequence=['#00CC96'])
 st.plotly_chart(fig_yearly, use_container_width=True)
 
+# Activity & Industry Analysis
+st.markdown("---")
+st.subheader("📊 Activity & Industry Analysis")
+
+# Top 10 CR Activities
+top_activities = df['CR Activity English'].value_counts().head(10).reset_index()
+top_activities.columns = ['CR Activity', 'Count']
+fig_activities = px.bar(top_activities, x='CR Activity', y='Count', title='Top 10 CR Activities', text_auto=True, color_discrete_sequence=['#FFA15A'])
+st.plotly_chart(fig_activities, use_container_width=True)
+
+# Sectoral Growth Over Time
+sector_growth = df.groupby(['Registration Year', 'CR Sector English']).size().reset_index(name='count')
+fig_sector_growth = px.line(sector_growth, x='Registration Year', y='count', color='CR Sector English', title='Sectoral Growth Over Time')
+st.plotly_chart(fig_sector_growth, use_container_width=True)
+
+# Company Type Registrations in Last 4 Quarters
+df['Registration Quarter'] = df['Registration Date'].dt.to_period('Q')
+last_4_quarters = df['Registration Quarter'].dropna().unique()[-4:]
+company_type_trends = df[df['Registration Quarter'].isin(last_4_quarters)].groupby(['Registration Quarter', 'Company Type English']).size().reset_index(name='count')
+fig_company_type = px.bar(company_type_trends, x='Registration Quarter', y='count', color='Company Type English', barmode='group', title='Company Type Registrations in Last 4 Quarters')
+st.plotly_chart(fig_company_type, use_container_width=True)
+
 # Search Feature
 st.markdown("---")
 st.subheader("🔍 Search CRs")
@@ -89,11 +113,6 @@ if search_query:
     search_results = df[(df['CR Number'].astype(str).str.contains(search_query, na=False)) |
                         (df['CR English Name'].str.contains(search_query, case=False, na=False))]
     st.dataframe(search_results, use_container_width=True)
-
-# Automated Alerts (Upcoming Expiring CRs)
-st.markdown("---")
-st.subheader("⏳ Upcoming Expiring CRs")
-st.dataframe(filtered_df[['CR Number', 'CR English Name', 'Expiry Date']].sort_values(by='Expiry Date').head(10), use_container_width=True)
 
 # Export Feature
 st.markdown("---")
