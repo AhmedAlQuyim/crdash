@@ -24,6 +24,7 @@ sector_filter = st.sidebar.multiselect("Sector", df['cr sector english'].dropna(
 status_filter = st.sidebar.multiselect("CR Status", df['cr english status'].unique().tolist(), default=[])
 municipality_filter = st.sidebar.multiselect("Municipality", df['mun english'].dropna().unique().tolist(), default=[])
 company_type_filter = st.sidebar.multiselect("Company Type", df['company type english'].dropna().unique().tolist(), default=[])
+cr_activity_filter = st.sidebar.multiselect("CR Activity", df['cr activity english'].dropna().unique().tolist(), default=[])
 
 registration_range = st.sidebar.slider("📅 Registration Year Range", int(df['registration date'].dt.year.min()), int(df['registration date'].dt.year.max()),
                                         (int(df['registration date'].dt.year.min()), int(df['registration date'].dt.year.max())))
@@ -41,6 +42,8 @@ if municipality_filter:
     filtered_df = filtered_df[filtered_df['mun english'].isin(municipality_filter)]
 if company_type_filter:
     filtered_df = filtered_df[filtered_df['company type english'].isin(company_type_filter)]
+if cr_activity_filter:
+    filtered_df = filtered_df[filtered_df['cr activity english'].isin(cr_activity_filter)]
 filtered_df = filtered_df[(filtered_df['registration date'].dt.year >= registration_range[0]) &
                           (filtered_df['registration date'].dt.year <= registration_range[1]) &
                           (filtered_df['expiry date'].dt.year >= expiry_range[0]) &
@@ -84,22 +87,21 @@ st.plotly_chart(fig_yearly, use_container_width=True)
 st.markdown("---")
 st.subheader("📊 Activity & Industry Analysis")
 
-# Emerging Activities
-top_emerging_activities = filtered_df.groupby('cr activity english').size().pct_change().nlargest(10).reset_index()
-fig_emerging_activities = px.bar(top_emerging_activities, x='cr activity english', y=0, title='Top 10 Emerging CR Activities', text_auto=True)
-st.plotly_chart(fig_emerging_activities, use_container_width=True)
+# Sectoral Growth Over Time
+sector_growth = filtered_df.groupby(['registration year', 'cr sector english']).size().reset_index(name='count')
+fig_sector_growth = px.line(sector_growth, x='registration year', y='count', color='cr sector english', title='Sectoral Growth Over Time')
+st.plotly_chart(fig_sector_growth, use_container_width=True)
 
-# Activity Distribution by Municipality
-fig_activity_municipality = px.bar(filtered_df.groupby(['mun english', 'cr activity english']).size().reset_index(name='count'),
-                                   x='mun english', y='count', color='cr activity english', title='Activity Distribution by Municipality', barmode='stack')
-st.plotly_chart(fig_activity_municipality, use_container_width=True)
+# Top 10 Sectors
+top_sectors = filtered_df['cr sector english'].value_counts().nlargest(10).reset_index()
+fig_top_sectors = px.bar(top_sectors, x='index', y='cr sector english', title='Top 10 Sectors', text_auto=True)
+st.plotly_chart(fig_top_sectors, use_container_width=True)
 
 # ICR vs CCR Trends
 df['registration quarter'] = df['registration date'].dt.to_period('Q').astype(str)
 icr_vs_ccr_trend = df.groupby(['registration quarter', 'company type english']).size().reset_index(name='count')
 fig_icr_ccr_trend = px.line(icr_vs_ccr_trend, x='registration quarter', y='count', color='company type english', title='ICR vs CCR Growth Trends Over Time')
 st.plotly_chart(fig_icr_ccr_trend, use_container_width=True)
-
 
 # Export Graphs
 st.markdown("---")
