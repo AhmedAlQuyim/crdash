@@ -24,7 +24,7 @@ sector_filter = st.sidebar.multiselect("Sector", df['cr sector english'].dropna(
 status_filter = st.sidebar.multiselect("CR Status", df['cr english status'].unique().tolist(), default=[])
 municipality_filter = st.sidebar.multiselect("Municipality", df['mun english'].dropna().unique().tolist(), default=[])
 company_type_filter = st.sidebar.multiselect("Company Type", df['company type english'].dropna().unique().tolist(), default=[])
-cr_activity_filter = st.sidebar.multiselect("CR Activity", df['cr activity english'].dropna().unique().tolist(), default=[])
+cr_activity_filter = st.sidebar.multiselect("CR Activity", df['cr activiy english'].dropna().unique().tolist(), default=[])
 
 registration_range = st.sidebar.slider("📅 Registration Year Range", int(df['registration date'].dt.year.min()), int(df['registration date'].dt.year.max()),
                                         (int(df['registration date'].dt.year.min()), int(df['registration date'].dt.year.max())))
@@ -43,7 +43,7 @@ if municipality_filter:
 if company_type_filter:
     filtered_df = filtered_df[filtered_df['company type english'].isin(company_type_filter)]
 if cr_activity_filter:
-    filtered_df = filtered_df[filtered_df['cr activity english'].isin(cr_activity_filter)]
+    filtered_df = filtered_df[filtered_df['cr activiy english'].isin(cr_activity_filter)]
 filtered_df = filtered_df[(filtered_df['registration date'].dt.year >= registration_range[0]) &
                           (filtered_df['registration date'].dt.year <= registration_range[1]) &
                           (filtered_df['expiry date'].dt.year >= expiry_range[0]) &
