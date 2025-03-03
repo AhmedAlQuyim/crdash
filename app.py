@@ -94,7 +94,8 @@ st.plotly_chart(fig_sector_growth, use_container_width=True)
 
 # Top 10 Sectors
 top_sectors = filtered_df['cr sector english'].value_counts().nlargest(10).reset_index()
-fig_top_sectors = px.bar(top_sectors, x='index', y='cr sector english', title='Top 10 Sectors', text_auto=True)
+top_sectors.columns = ['Sector', 'Count']
+fig_top_sectors = px.bar(top_sectors, x='Sector', y='Count', title='Top 10 Sectors', text_auto=True)
 st.plotly_chart(fig_top_sectors, use_container_width=True)
 
 # ICR vs CCR Trends
