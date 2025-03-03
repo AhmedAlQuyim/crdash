@@ -6,7 +6,7 @@ import base64
 # Load data
 @st.cache_data
 def load_data():
-    file_path = "CR Sample DB.xlsx"
+    file_path = "DBCRA.xlsx"
     df = pd.read_excel(file_path, sheet_name='Sheet1')
     df.columns = df.columns.str.lower()
     return df
