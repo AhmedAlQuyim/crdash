@@ -104,6 +104,15 @@ icr_vs_ccr_trend = df.groupby(['registration quarter', 'company type english']).
 fig_icr_ccr_trend = px.line(icr_vs_ccr_trend, x='registration quarter', y='count', color='company type english', title='ICR vs CCR Growth Trends Over Time')
 st.plotly_chart(fig_icr_ccr_trend, use_container_width=True)
 
+# Search Feature
+st.markdown("---")
+st.subheader("🔍 Search CRs")
+search_query = st.text_input("Search by CR Number or Name")
+if search_query:
+    search_results = df[(df['cr number'].astype(str).str.contains(search_query, na=False)) |
+                        (df['cr english name'].str.contains(search_query, case=False, na=False))]
+    st.dataframe(search_results, use_container_width=True)
+
 # Export Graphs
 st.markdown("---")
 st.subheader("📤 Export Data")
