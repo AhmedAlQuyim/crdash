@@ -27,7 +27,7 @@ def analyze_cr_activity_isic4(df):
 def map_cr_nationality(df):
     st.subheader("🌍 CR Nationality Mapping")
 
-    nationality_counts = df['nationality english'].value_counts().reset_index()
+    nationality_counts = df['cr nationality english'].value_counts().reset_index()
     nationality_counts.columns = ['Nationality', 'Count']
 
     fig_world_map = px.choropleth(
