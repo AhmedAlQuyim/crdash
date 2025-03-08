@@ -11,7 +11,7 @@ def analyze_cr_activity_isic4(df):
     st.subheader("📊 CR Activity & ISIC4 Analysis")
 
     # Count CRs by CR Activity
-    activity_counts = df['cr activiy english'].value_counts().nlargest(10).reset_index()
+    activity_counts = filtered_df['cr activiy english'].value_counts().nlargest(10).reset_index()
     activity_counts.columns = ['CR Activity', 'Count']
     fig_activity = px.bar(activity_counts, x='CR Activity', y='Count', title="Top 10 CR Activities", text_auto=True)
     st.plotly_chart(fig_activity, use_container_width=True)
@@ -21,7 +21,7 @@ def analyze_cr_activity_isic4(df):
 def map_cr_nationality(df):
     st.subheader("🌍 CR Nationality Mapping")
 
-    nationality_counts = df['cr nationality english'].value_counts().reset_index()
+    nationality_counts = filtered_df['cr nationality english'].value_counts().reset_index()
     nationality_counts.columns = ['Nationality', 'Count']
 
     fig_world_map = px.choropleth(
@@ -40,7 +40,7 @@ def map_cr_nationality_bar_chart(df):
     st.subheader("🌍 Top 10 CR Nationalities")
 
     # Count CRs by Nationality
-    nationality_counts = df['cr nationality english'].value_counts().nlargest(10).reset_index()
+    nationality_counts = filtered_df['cr nationality english'].value_counts().nlargest(10).reset_index()
     nationality_counts.columns = ['Nationality', 'Count']
 
     # Create Bar Chart
