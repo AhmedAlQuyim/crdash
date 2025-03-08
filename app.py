@@ -4,7 +4,10 @@ import plotly.express as px
 import base64
 
 
-def analyze_cr_activity_isic41(df):
+import plotly.express as px
+
+# Function to analyze CR Activity & ISIC4 Code
+def analyze_cr_activity_isic4(df):
     st.subheader("📊 CR Activity & ISIC4 Analysis")
 
     # Count CRs by ISIC4 code
@@ -18,6 +21,45 @@ def analyze_cr_activity_isic41(df):
     activity_counts.columns = ['CR Activity', 'Count']
     fig_activity = px.bar(activity_counts, x='CR Activity', y='Count', title="CR Count by Activity", text_auto=True)
     st.plotly_chart(fig_activity, use_container_width=True)
+
+
+# Function to map CR Nationality on a World Map
+def map_cr_nationality(df):
+    st.subheader("🌍 CR Nationality Mapping")
+
+    nationality_counts = df['nationality english'].value_counts().reset_index()
+    nationality_counts.columns = ['Nationality', 'Count']
+
+    fig_world_map = px.choropleth(
+        nationality_counts,
+        locations="Nationality",
+        locationmode="country names",
+        color="Count",
+        hover_name="Nationality",
+        title="CR Distribution by Nationality",
+        color_continuous_scale=px.colors.sequential.Plasma
+    )
+    st.plotly_chart(fig_world_map, use_container_width=True)
+
+
+# Function to map CR distribution by Municipality in Bahrain
+def map_cr_bahrain(df):
+    st.subheader("🗺️ CRs by Municipality in Bahrain")
+
+    municipality_counts = df['mun english'].value_counts().reset_index()
+    municipality_counts.columns = ['Municipality', 'Count']
+
+    fig_bahrain_map = px.bar(
+        municipality_counts,
+        x='Municipality',
+        y='Count',
+        title="CR Distribution by Municipality",
+        text_auto=True,
+        color_discrete_sequence=['#636EFA']
+    )
+    st.plotly_chart(fig_bahrain_map, use_container_width=True)
+
+
 
 # Load data
 @st.cache_data
@@ -131,55 +173,13 @@ st.plotly_chart(fig_icr_ccr_trend, use_container_width=True)
 #ISIC4 Anlayze
 st.subheader("📊 CR Activity & ISIC4 Analysis")
 analyze_cr_activity_isic41(filtered_df)
-st.subheader("📊 CR Activity & ISIC4 Analysis")
-def analyze_cr_activity_isic4(df):
-
-    # Count CRs by ISIC4 code
-    isic4_counts = df['isic4 code'].value_counts().reset_index()
-    isic4_counts.columns = ['ISIC4 Code', 'Count']
-    fig_isic4 = px.bar(isic4_counts, x='ISIC4 Code', y='Count', title="CR Count by ISIC4 Code", text_auto=True)
-    st.plotly_chart(fig_isic4, use_container_width=True)
-
-    # Count CRs by CR Activity
-    activity_counts = df['cr activiy english'].value_counts().reset_index()
-    activity_counts.columns = ['CR Activity', 'Count']
-    fig_activity = px.bar(activity_counts, x='CR Activity', y='Count', title="CR Count by Activity", text_auto=True)
-    st.plotly_chart(fig_activity, use_container_width=True)
-
 
 st.markdown("---")
 st.subheader("🌍 CR Nationality Mapping")
-def map_cr_nationality(df):
-
-    nationality_counts = df['nationality english'].value_counts().reset_index()
-    nationality_counts.columns = ['Nationality', 'Count']
-
-    fig_world_map = px.choropleth(
-        nationality_counts,
-        locations="Nationality",
-        locationmode="country names",
-        color="Count",
-        hover_name="Nationality",
-        title="CR Distribution by Nationality",
-        color_continuous_scale=px.colors.sequential.Plasma
-    )
-    st.plotly_chart(fig_world_map, use_container_width=True)
+map_cr_nationality(df)
 
 st.subheader("🗺️ CRs by Municipality in Bahrain")
-def map_cr_bahrain(df):
-    
-    municipality_counts = df['mun english'].value_counts().reset_index()
-    municipality_counts.columns = ['Municipality', 'Count']
-
-    fig_bahrain_map = px.bar(
-        municipality_counts,
-        x='Municipality',
-        y='Count',
-        title="CR Distribution by Municipality",
-        text_auto=True,
-        color_discrete_sequence=['#636EFA']
-    )
-    st.plotly_chart(fig_bahrain_map, use_container_width=True)
+map_cr_bahrain(df)
 
 # Search Feature
 st.markdown("---")
