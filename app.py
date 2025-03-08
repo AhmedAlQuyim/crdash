@@ -59,6 +59,15 @@ col3.metric("Deleted By Law CRs", df[df['cr english status'] == "DELETED BY LAW"
 col4.metric("Total ICR", df[df['company type english'] == "Individual Establishment"].shape[0])
 col5.metric("Total CCR", df[df['company type english'] != "Individual Establishment"].shape[0])
 
+# Filtered Key Metrics
+st.subheader("📊 Filtered Key Metrics")
+fcol1, fcol2, fcol3, fcol4, fcol5 = st.columns(5)
+fcol1.metric("Total CRs (Filtered)", len(filtered_df))
+fcol2.metric("Active CRs (Filtered)", filtered_df[filtered_df['cr english status'] == "ACTIVE"].shape[0])
+fcol3.metric("Deleted By Law CRs (Filtered)", filtered_df[filtered_df['cr english status'] == "DELETED BY LAW"].shape[0])
+fcol4.metric("Total ICR (Filtered)", filtered_df[filtered_df['company type english'] == "Individual Establishment"].shape[0])
+fcol5.metric("Total CCR (Filtered)", filtered_df[filtered_df['company type english'] != "Individual Establishment"].shape[0])
+
 # Visuals
 st.markdown("---")
 st.subheader("📊 Visual Insights")
