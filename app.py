@@ -147,7 +147,7 @@ def map_cr_nationality(df):
     )
     st.plotly_chart(fig_world_map, use_container_width=True)
 
-    st.subheader("🗺️ CRs by Municipality in Bahrain")
+st.subheader("🗺️ CRs by Municipality in Bahrain")
 def map_cr_bahrain(df):
     
     municipality_counts = df['mun english'].value_counts().reset_index()
