@@ -35,6 +35,20 @@ def map_cr_nationality(df):
     )
     st.plotly_chart(fig_world_map, use_container_width=True)
 
+#Fuction Map Bar Chart
+def map_cr_nationality_bar_chart(df):
+    st.subheader("🌍 Top 10 CR Nationalities")
+
+    # Count CRs by Nationality
+    nationality_counts = df['cr nationality english'].value_counts().nlargest(10).reset_index()
+    nationality_counts.columns = ['Nationality', 'Count']
+
+    # Create Bar Chart
+    fig_nationality = px.bar(nationality_counts, x='Nationality', y='Count', title="Top 10 CR Nationalities",
+                              text_auto=True, color='Count', color_continuous_scale='Blues')
+
+    st.plotly_chart(fig_nationality, use_container_width=True)
+
 
 # Function to map CR distribution by Municipality in Bahrain
 def map_cr_bahrain(df):
@@ -173,6 +187,9 @@ map_cr_nationality(df)
 
 #Bahrain Map
 map_cr_bahrain(df)
+
+#Bar Chart Top 10
+map_cr_nationality_bar_chart(df)
 
 # Search Feature
 st.markdown("---")
