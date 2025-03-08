@@ -126,6 +126,7 @@ col4.metric("Total ICR", df[df['company type english'] == "Individual Establishm
 col5.metric("Total CCR", df[df['company type english'] != "Individual Establishment"].shape[0])
 
 # Filtered Key Metrics
+st.markdown("---")
 st.subheader("📊 Filtered Key Metrics")
 fcol1, fcol2, fcol3, fcol4, fcol5 = st.columns(5)
 fcol1.metric("Total CRs (Filtered)", len(filtered_df))
@@ -147,10 +148,11 @@ col1.plotly_chart(fig_sector, use_container_width=True)
 fig_status = px.pie(filtered_df, names='cr english status', title='CR Status Distribution', color_discrete_sequence=px.colors.qualitative.Set2)
 col2.plotly_chart(fig_status, use_container_width=True)
 
-st.subheader("📍 CRs by Municipality")
-fig_municipality = px.bar(filtered_df.groupby("mun english").size().reset_index(name='count'),
-                          x='mun english', y='count', title='CRs by Municipality', text_auto=True, color_discrete_sequence=['#EF553B'])
-st.plotly_chart(fig_municipality, use_container_width=True)
+#CR by Municiplaity
+#st.subheader("📍 CRs by Municipality")
+#fig_municipality = px.bar(filtered_df.groupby("mun english").size().reset_index(name='count'),
+#                          x='mun english', y='count', title='CRs by Municipality', text_auto=True, color_discrete_sequence=['#EF553B'])
+#st.plotly_chart(fig_municipality, use_container_width=True)
 
 st.subheader("📅 Yearly Registration Trends")
 filtered_df['registration year'] = filtered_df['registration date'].dt.year
@@ -183,12 +185,12 @@ analyze_cr_activity_isic4(filtered_df)
 
 st.markdown("---")
 #World Map
-map_cr_nationality(df)
+#map_cr_nationality(df)
 
-#Bahrain Map
+#CRs by Municiplality
 map_cr_bahrain(df)
 
-#Bar Chart Top 10
+#Bar Chart Top 10 Nationalities
 map_cr_nationality_bar_chart(df)
 
 # Search Feature
