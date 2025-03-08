@@ -113,8 +113,8 @@ fig_icr_ccr_trend = px.line(icr_vs_ccr_trend, x='registration year', y='count', 
 st.plotly_chart(fig_icr_ccr_trend, use_container_width=True)
 
 #ISIC4 Anlayze
+st.subheader("📊 CR Activity & ISIC4 Analysis")
 def analyze_cr_activity_isic4(df):
-    st.subheader("📊 CR Activity & ISIC4 Analysis")
 
     # Count CRs by ISIC4 code
     isic4_counts = df['isic4 code'].value_counts().reset_index()
@@ -130,8 +130,8 @@ def analyze_cr_activity_isic4(df):
 
 
 st.markdown("---")
+st.subheader("🌍 CR Nationality Mapping")
 def map_cr_nationality(df):
-    st.subheader("🌍 CR Nationality Mapping")
 
     nationality_counts = df['nationality english'].value_counts().reset_index()
     nationality_counts.columns = ['Nationality', 'Count']
@@ -147,9 +147,9 @@ def map_cr_nationality(df):
     )
     st.plotly_chart(fig_world_map, use_container_width=True)
 
-def map_cr_bahrain(df):
     st.subheader("🗺️ CRs by Municipality in Bahrain")
-
+def map_cr_bahrain(df):
+    
     municipality_counts = df['mun english'].value_counts().reset_index()
     municipality_counts.columns = ['Municipality', 'Count']
 
