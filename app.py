@@ -11,9 +11,9 @@ def analyze_cr_activity_isic4(df):
     st.subheader("📊 CR Activity & ISIC4 Analysis")
 
     # Count CRs by CR Activity
-    activity_counts = filtered_df['cr activiy english'].value_counts().reset_index()
+    activity_counts = df['cr activiy english'].value_counts().nlargest(10).reset_index()
     activity_counts.columns = ['CR Activity', 'Count']
-    fig_activity = px.bar(activity_counts, x='CR Activity', y='Count', title="CR Count by Activity", text_auto=True)
+    fig_activity = px.bar(activity_counts, x='CR Activity', y='Count', title="Top 10 CR Activities", text_auto=True)
     st.plotly_chart(fig_activity, use_container_width=True)
 
 
