@@ -130,7 +130,7 @@ st.plotly_chart(fig_icr_ccr_trend, use_container_width=True)
 
 #ISIC4 Anlayze
 st.subheader("📊 CR Activity & ISIC4 Analysis")
-analyze_cr_activity_isic4(filtered_df)
+analyze_cr_activity_isic41(filtered_df)
 st.subheader("📊 CR Activity & ISIC4 Analysis")
 def analyze_cr_activity_isic4(df):
 
