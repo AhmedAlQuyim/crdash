@@ -129,7 +129,7 @@ def analyze_cr_activity_isic4(df):
     st.plotly_chart(fig_activity, use_container_width=True)
 
 
-t.markdown("---")
+st.markdown("---")
 st.subheader("🌍 CR Nationality Mapping")
 def map_cr_nationality(df):
     st.subheader("🌍 CR Nationality Mapping")
