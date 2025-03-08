@@ -112,6 +112,61 @@ icr_vs_ccr_trend = filtered_df.groupby(['registration year', 'company type engli
 fig_icr_ccr_trend = px.line(icr_vs_ccr_trend, x='registration year', y='count', color='company type english', title='ICR vs CCR Growth Trends Over Time')
 st.plotly_chart(fig_icr_ccr_trend, use_container_width=True)
 
+#ISIC4 Anlayze
+def analyze_cr_activity_isic4(df):
+    st.subheader("📊 CR Activity & ISIC4 Analysis")
+
+    # Count CRs by ISIC4 code
+    isic4_counts = df['isic4 code'].value_counts().reset_index()
+    isic4_counts.columns = ['ISIC4 Code', 'Count']
+    fig_isic4 = px.bar(isic4_counts, x='ISIC4 Code', y='Count', title="CR Count by ISIC4 Code", text_auto=True)
+    st.plotly_chart(fig_isic4, use_container_width=True)
+
+    # Count CRs by CR Activity
+    activity_counts = df['cr activiy english'].value_counts().reset_index()
+    activity_counts.columns = ['CR Activity', 'Count']
+    fig_activity = px.bar(activity_counts, x='CR Activity', y='Count', title="CR Count by Activity", text_auto=True)
+    st.plotly_chart(fig_activity, use_container_width=True)
+
+
+t.markdown("---")
+st.subheader("🌍 CR Nationality Mapping")
+def map_cr_nationality(df):
+    st.subheader("🌍 CR Nationality Mapping")
+
+    nationality_counts = df['nationality english'].value_counts().reset_index()
+    nationality_counts.columns = ['Nationality', 'Count']
+
+    fig_world_map = px.choropleth(
+        nationality_counts,
+        locations="Nationality",
+        locationmode="country names",
+        color="Count",
+        hover_name="Nationality",
+        title="CR Distribution by Nationality",
+        color_continuous_scale=px.colors.sequential.Plasma
+    )
+    st.plotly_chart(fig_world_map, use_container_width=True)
+st.markdown("World map visualization of CRs by nationality will be implemented here.")
+
+st.subheader("🗺️ CRs by Municipality in Bahrain")
+def map_cr_bahrain(df):
+    st.subheader("🗺️ CRs by Municipality in Bahrain")
+
+    municipality_counts = df['mun english'].value_counts().reset_index()
+    municipality_counts.columns = ['Municipality', 'Count']
+
+    fig_bahrain_map = px.bar(
+        municipality_counts,
+        x='Municipality',
+        y='Count',
+        title="CR Distribution by Municipality",
+        text_auto=True,
+        color_discrete_sequence=['#636EFA']
+    )
+    st.plotly_chart(fig_bahrain_map, use_container_width=True)
+st.markdown("Municipality-level CR distribution visualization will be implemented here.")
+
 # Search Feature
 st.markdown("---")
 st.subheader("🔍 Search CRs")
