@@ -130,7 +130,6 @@ def analyze_cr_activity_isic4(df):
 
 
 st.markdown("---")
-st.subheader("🌍 CR Nationality Mapping")
 def map_cr_nationality(df):
     st.subheader("🌍 CR Nationality Mapping")
 
@@ -147,9 +146,7 @@ def map_cr_nationality(df):
         color_continuous_scale=px.colors.sequential.Plasma
     )
     st.plotly_chart(fig_world_map, use_container_width=True)
-st.markdown("World map visualization of CRs by nationality will be implemented here.")
 
-st.subheader("🗺️ CRs by Municipality in Bahrain")
 def map_cr_bahrain(df):
     st.subheader("🗺️ CRs by Municipality in Bahrain")
 
@@ -165,7 +162,6 @@ def map_cr_bahrain(df):
         color_discrete_sequence=['#636EFA']
     )
     st.plotly_chart(fig_bahrain_map, use_container_width=True)
-st.markdown("Municipality-level CR distribution visualization will be implemented here.")
 
 # Search Feature
 st.markdown("---")
