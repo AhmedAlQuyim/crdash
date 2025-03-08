@@ -99,9 +99,9 @@ fig_top_sectors = px.bar(top_sectors, x='Sector', y='Count', title='Top 10 Secto
 st.plotly_chart(fig_top_sectors, use_container_width=True)
 
 # ICR vs CCR Trends
-df['registration quarter'] = df['registration date'].dt.to_period('Q').astype(str)
-icr_vs_ccr_trend = df.groupby(['registration quarter', 'company type english']).size().reset_index(name='count')
-fig_icr_ccr_trend = px.line(icr_vs_ccr_trend, x='registration quarter', y='count', color='company type english', title='ICR vs CCR Growth Trends Over Time')
+df['registration year'] = df['registration date'].dt.year
+icr_vs_ccr_trend = df.groupby(['registration year', 'company type english']).size().reset_index(name='count')
+fig_icr_ccr_trend = px.line(icr_vs_ccr_trend, x='registration year', y='count', color='company type english', title='ICR vs CCR Growth Trends Over Time')
 st.plotly_chart(fig_icr_ccr_trend, use_container_width=True)
 
 # Search Feature
