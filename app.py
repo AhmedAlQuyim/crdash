@@ -3,6 +3,22 @@ import pandas as pd
 import plotly.express as px
 import base64
 
+
+def analyze_cr_activity_isic41(df):
+    st.subheader("📊 CR Activity & ISIC4 Analysis")
+
+    # Count CRs by ISIC4 code
+    isic4_counts = df['isic4 code'].value_counts().reset_index()
+    isic4_counts.columns = ['ISIC4 Code', 'Count']
+    fig_isic4 = px.bar(isic4_counts, x='ISIC4 Code', y='Count', title="CR Count by ISIC4 Code", text_auto=True)
+    st.plotly_chart(fig_isic4, use_container_width=True)
+
+    # Count CRs by CR Activity
+    activity_counts = df['cr activiy english'].value_counts().reset_index()
+    activity_counts.columns = ['CR Activity', 'Count']
+    fig_activity = px.bar(activity_counts, x='CR Activity', y='Count', title="CR Count by Activity", text_auto=True)
+    st.plotly_chart(fig_activity, use_container_width=True)
+
 # Load data
 @st.cache_data
 def load_data():
@@ -113,6 +129,8 @@ fig_icr_ccr_trend = px.line(icr_vs_ccr_trend, x='registration year', y='count', 
 st.plotly_chart(fig_icr_ccr_trend, use_container_width=True)
 
 #ISIC4 Anlayze
+st.subheader("📊 CR Activity & ISIC4 Analysis")
+analyze_cr_activity_isic4(filtered_df)
 st.subheader("📊 CR Activity & ISIC4 Analysis")
 def analyze_cr_activity_isic4(df):
 
