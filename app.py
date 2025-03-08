@@ -171,14 +171,13 @@ fig_icr_ccr_trend = px.line(icr_vs_ccr_trend, x='registration year', y='count', 
 st.plotly_chart(fig_icr_ccr_trend, use_container_width=True)
 
 #ISIC4 Anlayze
-st.subheader("📊 CR Activity & ISIC4 Analysis")
 analyze_cr_activity_isic4(filtered_df)
 
 st.markdown("---")
-st.subheader("🌍 CR Nationality Mapping")
+#World Map
 map_cr_nationality(df)
 
-st.subheader("🗺️ CRs by Municipality in Bahrain")
+#Bahrain Map
 map_cr_bahrain(df)
 
 # Search Feature
